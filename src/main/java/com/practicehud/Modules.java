@@ -258,6 +258,8 @@ public final class Modules {
     public static void renderAll(DrawContext ctx, MinecraftClient mc) {
         ClientPlayerEntity p = mc.player;
         if (p == null || mc.world == null || mc.options.hudHidden) return;
+        // While the HUD editor is open it draws the HUD itself (crisply, above the menu blur).
+        if (mc.currentScreen instanceof HudEditorScreen && !HudEditorScreen.drawing) return;
         Hud.begin();
         Combat.sampleInput(mc);
         for (Module m : ALL) {

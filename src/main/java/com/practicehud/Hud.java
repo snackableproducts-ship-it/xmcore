@@ -65,6 +65,20 @@ public final class Hud {
     private static float dt = 0.016f;
     private static final Map<String, float[]> ANIM = new HashMap<>();
     private static final Map<String, Float> BARS = new HashMap<>();
+    /** Final on-screen rectangle of every panel drawn this frame: {x, y, w, h, frame}. Used by the HUD editor. */
+    private static final Map<String, int[]> BOUNDS = new HashMap<>();
+
+    /** Screen rectangle {x, y, w, h} of a panel drawn in the latest frame, or null if it was not drawn. */
+    public static int[] bounds(String title) {
+        int[] b = BOUNDS.get(title);
+        return b != null && b[4] >= (int) frame ? b : null;
+    }
+
+    public static java.util.List<String> drawnTitles() {
+        java.util.List<String> out = new java.util.ArrayList<>();
+        for (Map.Entry<String, int[]> e : BOUNDS.entrySet()) if (e.getValue()[4] >= (int) frame) out.add(e.getKey());
+        return out;
+    }
 
     private Hud() {}
 
@@ -278,6 +292,7 @@ public final class Hud {
         }
         x = Math.max(0, Math.min(sw - w, x));
         y = Math.max(0, Math.min(sh - h, y));
+        BOUNDS.put(title, new int[]{x, y, w, h, (int) frame});
         return new int[]{x, y};
     }
 
